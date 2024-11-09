@@ -19,7 +19,7 @@ public class People : MonoBehaviour
 	
 
 	//parameters follow
-	private float tau = 0.5f; //tau: relaxation time
+	private float tau = 0.1f; //tau: relaxation time
 	private Vector3 xi = new Vector3(0,0,0); //xi: fluctuation
 	private float v0 = 2f; //v0: desired speed
 	private Vector3 e0 = new Vector3(0,0,0);
@@ -74,7 +74,7 @@ public class People : MonoBehaviour
 		foreach(People people in PeopleManager.Instance.peopleList){
 			if(people == this)	continue;
 			else{
-				r = 2f;
+				r = this.radius + people.radius;
 				d = (this.pos - people.pos).magnitude;
 				if((r-d)/BAlpha < -5 || d == 0)	continue;
 				n = (this.pos - people.pos) / d;

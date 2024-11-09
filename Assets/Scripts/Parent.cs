@@ -6,7 +6,7 @@ public class Parent : MonoBehaviour
 {
     public Type type = Type.A;
 	public GameObject people;
-	public float generateRate = 3;
+	public float generateRate = 2;
 	
 	IEnumerator Start()
 	{
