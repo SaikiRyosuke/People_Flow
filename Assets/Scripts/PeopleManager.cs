@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using UnityEngine.UI;
 
 public class PeopleManager : MonoBehaviour
 {
 	public List<People> peopleList = new List<People>();
 	public static PeopleManager Instance;
 	public GameObject A,B, box;
+	public float timeScale = 1.0f;
+	public Slider timeScaleSlider;
+	public Text timeScaleText;
+	public int phiDivision = 50;	
+	public float generateRate = 4;
 	
-	public int phiDivision = 10;	
-	public float[] phiArray, npArray, nmArray;
-	public List<GameObject> phiDisplay = new List<GameObject>();
-	public float phi;
+	float[] phiArray, npArray, nmArray;
+	List<GameObject> phiDisplay = new List<GameObject>();
+	float phi;
 	
 	
     void Awake()
@@ -40,18 +45,23 @@ public class PeopleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		Time.timeScale = timeScale;
 		npArray =new float[phiDivision];
 		nmArray =new float[phiDivision];
 		phiArray =new float[phiDivision];
 
 		foreach(People people in peopleList){
 			int k = (int)((people.pos.y + Parameters.L) * phiDivision / 2 / Parameters.L );
+			if( k < 0 || k >= phiDivision)	continue;
 			if(people.type == Type.A)	npArray[k] += 1;
 			else if(people.type == Type.B) nmArray[k] += 1;
 		}
 		
 		for(int i = 0; i < phiDivision; i++){
-			if(npArray[i] == 0 && nmArray[i] == 0)	phiArray[i] = 0;
+			if(npArray[i] == 0 && nmArray[i] == 0){
+				phiArray[i] = 0;
+				continue;
+			}	
 			var np = npArray[i];	var nm = nmArray[i];
 			float phiI = (np-nm)/(np+nm);
 			SpriteRenderer sr = phiDisplay[i].GetComponent<SpriteRenderer>();
@@ -74,5 +84,11 @@ public class PeopleManager : MonoBehaviour
 	public void RemovePeople(People people)
 	{
 		peopleList.Remove(people);
+	}
+	
+	public void ChangeTimeScale()
+	{
+		timeScale = timeScaleSlider.value;
+		timeScaleText.text = timeScale.ToString();
 	}
 }

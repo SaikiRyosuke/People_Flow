@@ -19,7 +19,7 @@ public class People : MonoBehaviour
 	
 
 	//parameters follow
-	private float tau = 0.1f; //tau: relaxation time
+	private float tau = 0.5f; //tau: relaxation time
 	private Vector3 xi = new Vector3(0,0,0); //xi: fluctuation
 	private float v0 = 2f; //v0: desired speed
 	private Vector3 e0 = new Vector3(0,0,0);
