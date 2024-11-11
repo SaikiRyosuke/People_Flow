@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PeopleManager : MonoBehaviour
 {
@@ -24,7 +25,8 @@ public class PeopleManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-		
+		phiDivision = Parameters.Instance.phiDivision;
+		generateRate = Parameters.Instance.generateRate;
 		for(int i = 0; i < A.transform.childCount; i++){
 			peopleList.Add(A.transform.GetChild(i).GetComponent<People>());
 		}
@@ -36,8 +38,8 @@ public class PeopleManager : MonoBehaviour
 	void Start()
 	{
 		for(int i = 0; i < phiDivision; i++){
-			var obj = Instantiate(box, new Vector3(15f,-Parameters.L + (2*i+1)*Parameters.L/phiDivision,0), Quaternion.identity);
-			obj.transform.localScale = new Vector3(1,2*Parameters.L/phiDivision,1);
+			var obj = Instantiate(box, new Vector3(15f,-Parameters.Instance.L + (2*i+1)*Parameters.Instance.L/phiDivision,0), Quaternion.identity);
+			obj.transform.localScale = new Vector3(1,2*Parameters.Instance.L/phiDivision,1);
 			phiDisplay.Add(obj);
 		}
 	}
@@ -51,7 +53,7 @@ public class PeopleManager : MonoBehaviour
 		phiArray =new float[phiDivision];
 
 		foreach(People people in peopleList){
-			int k = (int)((people.pos.y + Parameters.L) * phiDivision / 2 / Parameters.L );
+			int k = (int)((people.pos.y + Parameters.Instance.L) * phiDivision / 2 / Parameters.Instance.L );
 			if( k < 0 || k >= phiDivision)	continue;
 			if(people.type == Type.A)	npArray[k] += 1;
 			else if(people.type == Type.B) nmArray[k] += 1;
@@ -59,7 +61,7 @@ public class PeopleManager : MonoBehaviour
 		
 		for(int i = 0; i < phiDivision; i++){
 			if(npArray[i] == 0 && nmArray[i] == 0){
-				phiArray[i] = 0;
+				phiArray[i] = 5;
 				continue;
 			}	
 			var np = npArray[i];	var nm = nmArray[i];
@@ -72,7 +74,15 @@ public class PeopleManager : MonoBehaviour
 			//方式2(2乗する)
 			// phiArray[i] = Mathf.Pow(phiI, 2);
 		}
-		phi = phiArray.Average();
+		int count = 0;	float sum = 0;
+		//5をnullとして、nullを除いた平均をとってみる。
+		for(int i = 0; i < phiDivision; i++){
+			if(phiArray[i] != 5){
+				count++;
+				sum += phiArray[i];
+			}
+		}
+		phi = sum / count;
 		Debug.Log(phi);
     }
 	
@@ -90,5 +100,10 @@ public class PeopleManager : MonoBehaviour
 	{
 		timeScale = timeScaleSlider.value;
 		timeScaleText.text = timeScale.ToString();
+	}
+	
+	public void ResetSim()
+	{
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 }

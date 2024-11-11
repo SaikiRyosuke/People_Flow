@@ -10,14 +10,21 @@ public class Parent : MonoBehaviour
 	IEnumerator Start()
 	{
 		for(int i = 0; i < this.transform.childCount; i++){
-			if(type == Type.A)	this.transform.GetChild(i).GetComponent<People>().velocity.x = 1f;
-			if(type== Type.B) this.transform.GetChild(i).GetComponent<People>().velocity.x = -1f;
+			var obj = this.transform.GetChild(i);
+			if(type == Type.A){
+				obj.GetComponent<People>().velocity.x = 1f;
+				obj.localScale = obj.GetComponent<People>().radius*2 * new Vector3(1,1,1);
+			}	
+			if(type== Type.B){
+				obj.GetComponent<People>().velocity.x = -1f;
+				obj.localScale = obj.GetComponent<People>().radius*2 * new Vector3(1,1,1);
+			}
 		}
 		while(true){
 			yield return new WaitForSeconds(1/PeopleManager.Instance.generateRate);
 			GameObject obj = people;
-			if(type == Type.A)	obj = Instantiate(people, new Vector3(-Parameters.L-10,Random.Range(-Parameters.L+2,Parameters.L-2),0), Quaternion.identity );
-			if(type == Type.B)	obj = Instantiate(people, new Vector3(Parameters.L+10,Random.Range(-Parameters.L+2,Parameters.L-2),0), Quaternion.identity );
+			if(type == Type.A)	obj = Instantiate(people, new Vector3(-Parameters.Instance.L-10,Random.Range(-Parameters.Instance.L+2,Parameters.Instance.L-2),0), Quaternion.identity );
+			if(type == Type.B)	obj = Instantiate(people, new Vector3(Parameters.Instance.L+10,Random.Range(-Parameters.Instance.L+2,Parameters.Instance.L-2),0), Quaternion.identity );
 			obj.transform.parent = this.transform;
 			obj.transform.GetComponent<People>().pos = obj.transform.position;
 			PeopleManager.Instance.AddPeople(obj.transform.GetComponent<People>());

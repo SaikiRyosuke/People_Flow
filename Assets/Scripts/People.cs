@@ -12,6 +12,8 @@ public class People : MonoBehaviour
 	Vector3 f_b_soc = new Vector3(0,0,0);
 	Vector3 f_b_ph = new Vector3(0,0,0);
 	Vector3 e = new Vector3(0,0,0);
+	Vector3 xi = new Vector3(0,0,0); //xi: fluctuation
+
 	public Vector3 pos = new Vector3(0,0,0);
 	
 	float r = 0f, d = 0f, deltaV = 0f, cos_phiAlphaBeta = 0f;
@@ -20,13 +22,12 @@ public class People : MonoBehaviour
 
 	//parameters follow
 	private float tau = 0.5f; //tau: relaxation time
-	private Vector3 xi = new Vector3(0,0,0); //xi: fluctuation
 	private float v0 = 2f; //v0: desired speed
 	private Vector3 e0 = new Vector3(0,0,0);
 	private float xiAmp = 3f;
 	
 	private float Aalpha = 1f; 	//Aalpha: the altitude of soc-force
-	private float radius = 0.5f; //radius: the radius of the person's body
+	public float radius = 0.1f; //radius: the radius of the person's body
 	private float BAlpha = 1f; //bAlpha: decrease rate in socio-phychological force
 	private float lambdaAlpha = 0.1f; //lambdaAlpha: description of anisotropic force
 	private float k = 10f; //k: body counteracting force
@@ -36,6 +37,14 @@ public class People : MonoBehaviour
 	void Awake()
 	{
 		pos = this.transform.position;
+		tau = Parameters.Instance.tau;
+		v0 = Parameters.Instance.v0;
+		Aalpha = Parameters.Instance.Aalpha;
+		radius = Parameters.Instance.radius;
+		BAlpha = Parameters.Instance.BAlpha;
+		lambdaAlpha = Parameters.Instance.lambdaAlpha;
+		k = Parameters.Instance.k;
+		kappa = Parameters.Instance.kappa;
 	}
 
 	void Start()
@@ -54,11 +63,11 @@ public class People : MonoBehaviour
 		pos = this.transform.position;
 
 		//目的地に到達したら削除
-		if(type == Type.A && pos.x > Parameters.L){
+		if(type == Type.A && pos.x > Parameters.Instance.L){
 			PeopleManager.Instance.RemovePeople(this);
 			Destroy(this.gameObject);
 		}	
-		if(type == Type.B && pos.x < -Parameters.L){
+		if(type == Type.B && pos.x < -Parameters.Instance.L){
 			PeopleManager.Instance.RemovePeople(this);
 			Destroy(this.gameObject);
 		}	
@@ -92,7 +101,7 @@ public class People : MonoBehaviour
 		
 		//interactions from upper boundary(y = 10)
 		r = this.radius;
-		d = Parameters.L - this.pos.y;
+		d = Parameters.Instance.L - this.pos.y;
 		n = new Vector3(0f,-1f);
 		t = new Vector3(-n.y, n.x);
 		deltaV = Vector3.Dot(-this.velocity, t);
@@ -101,7 +110,7 @@ public class People : MonoBehaviour
 		
 		//interactions from lower boundary(y = -10)
 		r = this.radius;
-		d = this.pos.y + Parameters.L;
+		d = this.pos.y + Parameters.Instance.L;
 		n = new Vector3(0f,1f);
 		t = new Vector3(-n.y, n.x);
 		deltaV = Vector3.Dot(-this.velocity, t);

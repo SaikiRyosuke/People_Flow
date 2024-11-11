@@ -1,0 +1,16 @@
+{
+	"L": 10,
+	"phiDivision": 50,
+	"generateRate":3,
+	
+	"tau": 1,
+	"v0": 2,
+	"xiAmp": 3,
+	
+	"Aalpha": 0.1,
+	"radius": 0.5,
+	"BAlpha": 1,
+	"lambdaAlpha": 0.3,
+	"k": 10,
+	"kappa": 5 
+}
