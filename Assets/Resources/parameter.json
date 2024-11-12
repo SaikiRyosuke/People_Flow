@@ -5,12 +5,12 @@
 	
 	"tau": 1,
 	"v0": 2,
-	"xiAmp": 0.1,
+	"xiAmp": 0,
 	
 	"Aalpha": 0.1,
-	"radius": 0.5,
+	"radius": 0.3,
 	"BAlpha": 1,
 	"lambdaAlpha": 0.3,
-	"k": 10,
+	"k": 0,
 	"kappa": 0 
 }
