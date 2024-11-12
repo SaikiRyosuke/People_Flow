@@ -45,10 +45,21 @@ public class People : MonoBehaviour
 		lambdaAlpha = Parameters.Instance.lambdaAlpha;
 		k = Parameters.Instance.k;
 		kappa = Parameters.Instance.kappa;
+		this.gameObject.transform.localScale = this.radius * 2 * new Vector3(1,1,1);
 	}
 
 	void Start()
 	{
+		pos = this.transform.position;
+		tau = Parameters.Instance.tau;
+		v0 = Parameters.Instance.v0;
+		Aalpha = Parameters.Instance.Aalpha;
+		radius = Parameters.Instance.radius;
+		BAlpha = Parameters.Instance.BAlpha;
+		lambdaAlpha = Parameters.Instance.lambdaAlpha;
+		k = Parameters.Instance.k;
+		kappa = Parameters.Instance.kappa;
+		this.gameObject.transform.localScale = this.radius * 2 * new Vector3(1,1,1);
 		type = transform.parent.gameObject.GetComponent<Parent>().type;
 		if(type == Type.A)	e0 = new Vector3(1,0,0);
 		if(type == Type.B)	e0 = new Vector3(-1,0,0);

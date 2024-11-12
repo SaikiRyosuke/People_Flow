@@ -20,25 +20,24 @@ public class PeopleManager : MonoBehaviour
 	float[] phiArray, npArray, nmArray;
 	List<GameObject> phiDisplay = new List<GameObject>();
 	float phi;
+	List<float> phiListForTime = new List<float>();
+	public float phiAverageForTime = 0f;
 	
-	
-    void Awake()
-    {
-        Instance = this;
+		
+	void Start()
+	{
+		Instance = this;
 		phiDivision = Parameters.Instance.phiDivision;
 		generateRate = Parameters.Instance.generateRate;
+		A.SetActive(true);	B.SetActive(true);
 		for(int i = 0; i < A.transform.childCount; i++){
 			peopleList.Add(A.transform.GetChild(i).GetComponent<People>());
 		}
 		for(int i = 0; i < B.transform.childCount; i++){
 			peopleList.Add(B.transform.GetChild(i).GetComponent<People>());
 		}
-    }
-	
-	void Start()
-	{
 		for(int i = 0; i < phiDivision; i++){
-			var obj = Instantiate(box, new Vector3(15f,-Parameters.Instance.L + (2*i+1)*Parameters.Instance.L/phiDivision,0), Quaternion.identity);
+			var obj = Instantiate(box, new Vector3(Parameters.Instance.L + 5,-Parameters.Instance.L + (2*i+1)*Parameters.Instance.L/phiDivision,0), Quaternion.identity);
 			obj.transform.localScale = new Vector3(1,2*Parameters.Instance.L/phiDivision,1);
 			phiDisplay.Add(obj);
 		}
@@ -55,6 +54,7 @@ public class PeopleManager : MonoBehaviour
 		foreach(People people in peopleList){
 			int k = (int)((people.pos.y + Parameters.Instance.L) * phiDivision / 2 / Parameters.Instance.L );
 			if( k < 0 || k >= phiDivision)	continue;
+			if(people.pos.x > Parameters.Instance.L || people.pos.x < -Parameters.Instance.L)	continue;
 			if(people.type == Type.A)	npArray[k] += 1;
 			else if(people.type == Type.B) nmArray[k] += 1;
 		}
@@ -83,7 +83,9 @@ public class PeopleManager : MonoBehaviour
 			}
 		}
 		phi = sum / count;
-		Debug.Log(phi);
+		phiListForTime.Add(phi);
+		phiAverageForTime = phiListForTime.Average();
+		Debug.Log(phiAverageForTime);
     }
 	
 	public void AddPeople(People people)
