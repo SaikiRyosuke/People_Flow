@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 
 public class People : MonoBehaviour
@@ -9,15 +10,17 @@ public class People : MonoBehaviour
 	public Vector3 velocity = new Vector3();
 	Vector3 f_soc = new Vector3(0,0,0);
 	Vector3 f_ph = new Vector3(0,0,0);
+	Vector3 f_dir = new Vector3(0,0,0);
 	Vector3 f_b_soc = new Vector3(0,0,0);
 	Vector3 f_b_ph = new Vector3(0,0,0);
-	Vector3 e = new Vector3(0,0,0);
+	Vector3 eVector = new Vector3(0,0,0);
 	Vector3 xi = new Vector3(0,0,0); //xi: fluctuation
 
 	public Vector3 pos = new Vector3(0,0,0);
 	
 	float r = 0f, d = 0f, deltaV = 0f, cos_phiAlphaBeta = 0f;
-	Vector3 n = new Vector3(0,0,0), t = new Vector3(0,0,0);
+	Vector3 nVector = new Vector3(0,0,0), tVector = new Vector3(0,0,0), etVector = new Vector3(0,0,0);
+	List<float> angleList = new List<float>();
 	
 
 	//parameters follow
@@ -32,6 +35,8 @@ public class People : MonoBehaviour
 	private float lambdaAlpha = 0.1f; //lambdaAlpha: description of anisotropic force
 	private float k = 10f; //k: body counteracting force
 	private float kappa = 5f; //kappa: sliding friction force
+	private float CAlpha = 1f;
+	private float d_dir = 2f;
 
 
 	void Awake()
@@ -85,51 +90,58 @@ public class People : MonoBehaviour
 		
 		//物理量計算パート
 		xi = new Vector3(Random.Range(-xiAmp,xiAmp), Random.Range(-xiAmp,xiAmp),0);
-		e = velocity/velocity.magnitude;
+		eVector = velocity/velocity.magnitude;
 		
 		//2次元バージョン限定の処理。z座標を0にする。
 		pos.z = 0; velocity.z = 0;
 		//ここまで
-		f_ph = new Vector3(0,0,0); f_soc = new Vector3(0,0,0);
+		
+		angleList = new List<float>();
+		f_ph = new Vector3(0,0,0); f_soc = new Vector3(0,0,0); f_dir = new Vector3(0,0,0);
 		foreach(People people in PeopleManager.Instance.peopleList){
 			if(people == this)	continue;
 			else{
 				r = this.radius + people.radius;
 				d = (this.pos - people.pos).magnitude;
 				if((r-d)/BAlpha < -5 || d == 0)	continue;
-				n = (this.pos - people.pos) / d;
-				t = new Vector3(-n.y, n.x);
+				nVector = (this.pos - people.pos) / d;
+				tVector = new Vector3(-nVector.y, nVector.x);
 				// Debug.Log(d); Debug.Log(people); Debug.Log(people.pos); Debug.Log(people.transform.position);
-				deltaV = Vector3.Dot(people.velocity - this.velocity, t);
-				cos_phiAlphaBeta = -(n.x * e.x + n.y * e.y);
+				deltaV = Vector3.Dot(people.velocity - this.velocity, tVector);
+				cos_phiAlphaBeta = -(nVector.x * eVector.x + nVector.y * eVector.y);
 				// Socio-phychological Force
-				f_soc += Aalpha * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * n;
+				f_soc += Aalpha * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * nVector;
 				// physical force
-				f_ph += k* Theta(r-d) * n + kappa * Theta(r-d) * deltaV * t;
+				f_ph += k* Theta(r-d) * nVector + kappa * Theta(r-d) * deltaV * tVector;
+				//direction-change force
+				if(people.type == this.type && d-r < d_dir)	angleList.Add(Mathf.Atan( (people.velocity.y - this.velocity.y) / (people.velocity.x - this.velocity.x + 1) ));
 			}
-			
 		}
+		etVector = new Vector3(-eVector.y, eVector.x, 0);
+		 f_dir = angleList.Count > 0 ? CAlpha * Mathf.Sin(angleList.Average()) * etVector: 0 * etVector;
+		
+		
 		
 		//interactions from upper boundary(y = 10)
 		r = this.radius;
 		d = Parameters.Instance.L - this.pos.y;
-		n = new Vector3(0f,-1f);
-		t = new Vector3(-n.y, n.x);
-		deltaV = Vector3.Dot(-this.velocity, t);
-		f_b_soc = Aalpha * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * n;
-		f_ph = k* Theta(r-d) * n + kappa * Theta(r-d) * deltaV * t;
+		nVector = new Vector3(0f,-1f);
+		tVector = new Vector3(-nVector.y, nVector.x);
+		deltaV = Vector3.Dot(-this.velocity, tVector);
+		f_b_soc = Aalpha * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * nVector;
+		f_ph = k* Theta(r-d) * nVector + kappa * Theta(r-d) * deltaV * tVector;
 		
 		//interactions from lower boundary(y = -10)
 		r = this.radius;
 		d = this.pos.y + Parameters.Instance.L;
-		n = new Vector3(0f,1f);
-		t = new Vector3(-n.y, n.x);
-		deltaV = Vector3.Dot(-this.velocity, t);
-		f_b_soc += Aalpha * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * n;
-		f_ph += k* Theta(r-d) * n + kappa * Theta(r-d) * deltaV * t;
+		nVector = new Vector3(0f,1f);
+		tVector = new Vector3(-nVector.y, nVector.x);
+		deltaV = Vector3.Dot(-this.velocity, tVector);
+		f_b_soc += Aalpha * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * nVector;
+		f_ph += k* Theta(r-d) * nVector + kappa * Theta(r-d) * deltaV * tVector;
 		
 		//velocity計算
-		velocity += ( (v0*e0 + xi - velocity)/tau + Vector3.ClampMagnitude(f_soc + f_ph + f_b_soc + f_b_ph,10f) )* Time.deltaTime;
+		velocity += ( (v0*e0 + xi - velocity)/tau + Vector3.ClampMagnitude(f_soc + f_ph + f_dir + f_b_soc + f_b_ph,100f) )* Time.deltaTime;
 		pos += velocity * Time.deltaTime;
 		this.transform.position = pos;
 	}

@@ -11,6 +11,8 @@
 	"radius": 0.3,
 	"BAlpha": 1,
 	"lambdaAlpha": 0.3,
-	"k": 0,
-	"kappa": 0 
+	"k": 5,
+	"kappa": 10,
+	"CAlpha": 100,
+	"d_dir": 2
 }

@@ -25,6 +25,8 @@ public class Parameters : MonoBehaviour
 	public float lambdaAlpha = 0.1f; //lambdaAlpha: description of anisotropic force
 	public float k = 10f; //k: body counteracting force
 	public float kappa = 5f; //kappa: sliding friction force
+	public float CAlpha = 1;
+	public float d_dir = 1f;
 	
 	public static Parameters Instance;
 	void Awake()
@@ -46,6 +48,8 @@ public class Parameters : MonoBehaviour
 		lambdaAlpha = pm.lambdaAlpha;
 		k = pm.k;
 		kappa = pm.kappa;
+		CAlpha = pm.CAlpha;
+		d_dir = pm.d_dir;
 	}
 }
 
@@ -69,5 +73,7 @@ public class ParameterManager
 	public float lambdaAlpha = 0.1f; //lambdaAlpha: description of anisotropic force
 	public float k = 10f; //k: body counteracting force
 	public float kappa = 5f; //kappa: sliding friction force
+	public float CAlpha = 1f;
+	public float d_dir = 2f;
 
 }
