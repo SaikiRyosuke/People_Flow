@@ -14,6 +14,7 @@ public class PeopleManager : MonoBehaviour
 	public float timeScale = 1.0f;
 	public Slider timeScaleSlider;
 	public Text timeScaleText;
+	public Text phiText;
 	public int phiDivision = 50;	
 	public float generateRate = 4;
 	
@@ -26,6 +27,7 @@ public class PeopleManager : MonoBehaviour
 		
 	void Start()
 	{
+		Debug.Log(Parameters.Instance.Aalpha_same);
 		Instance = this;
 		phiDivision = Parameters.Instance.phiDivision;
 		generateRate = Parameters.Instance.generateRate;
@@ -37,8 +39,8 @@ public class PeopleManager : MonoBehaviour
 			peopleList.Add(B.transform.GetChild(i).GetComponent<People>());
 		}
 		for(int i = 0; i < phiDivision; i++){
-			var obj = Instantiate(box, new Vector3(Parameters.Instance.L + 5,-Parameters.Instance.L + (2*i+1)*Parameters.Instance.L/phiDivision,0), Quaternion.identity);
-			obj.transform.localScale = new Vector3(1,2*Parameters.Instance.L/phiDivision,1);
+			var obj = Instantiate(box, new Vector3(Parameters.Instance.Lx + 5,-Parameters.Instance.Ly + (2*i+1)*Parameters.Instance.Ly/phiDivision,0), Quaternion.identity);
+			obj.transform.localScale = new Vector3(1,2*Parameters.Instance.Ly/phiDivision,1);
 			phiDisplay.Add(obj);
 		}
 	}
@@ -52,9 +54,9 @@ public class PeopleManager : MonoBehaviour
 		phiArray =new float[phiDivision];
 
 		foreach(People people in peopleList){
-			int k = (int)((people.pos.y + Parameters.Instance.L) * phiDivision / 2 / Parameters.Instance.L );
+			int k = (int)((people.pos.y + Parameters.Instance.Ly) * phiDivision / 2 / Parameters.Instance.Ly );
 			if( k < 0 || k >= phiDivision)	continue;
-			if(people.pos.x > Parameters.Instance.L || people.pos.x < -Parameters.Instance.L)	continue;
+			if(people.pos.x > Parameters.Instance.Lx || people.pos.x < -Parameters.Instance.Lx)	continue;
 			if(people.type == Type.A)	npArray[k] += 1;
 			else if(people.type == Type.B) nmArray[k] += 1;
 		}
@@ -85,7 +87,7 @@ public class PeopleManager : MonoBehaviour
 		phi = sum / count;
 		phiListForTime.Add(phi);
 		phiAverageForTime = phiListForTime.Average();
-		Debug.Log(phiAverageForTime);
+		phiText.text = phi.ToString();
     }
 	
 	public void AddPeople(People people)

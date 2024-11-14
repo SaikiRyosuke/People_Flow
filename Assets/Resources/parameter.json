@@ -1,18 +1,20 @@
 {
-	"L": 10,
-	"phiDivision": 20,
+	"Lx": 100,
+	"Ly": 10,
+	"phiDivision": 50,
 	"generateRate":0.5,
 	
 	"tau": 1,
 	"v0": 2,
-	"xiAmp": 0,
+	"xiAmp": 0.5,
 	
-	"Aalpha": 0.1,
+	"Aalpha_same": 1,
+	"Aalpha_opp":  2,
 	"radius": 0.3,
 	"BAlpha": 1,
 	"lambdaAlpha": 0.3,
 	"k": 5,
-	"kappa": 10,
-	"CAlpha": 100,
+	"kappa": 5,
+	"CAlpha": 0,
 	"d_dir": 2
 }

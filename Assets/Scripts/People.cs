@@ -29,7 +29,8 @@ public class People : MonoBehaviour
 	private Vector3 e0 = new Vector3(0,0,0);
 	private float xiAmp = 3f;
 	
-	private float Aalpha = 1f; 	//Aalpha: the altitude of soc-force
+	private float Aalpha_same = 0.1f; 	//Aalpha: the altitude of soc-force
+	private float Aalpha_opp = 1f; 	//Aalpha: the altitude of soc-force
 	public float radius = 0.1f; //radius: the radius of the person's body
 	private float BAlpha = 1f; //bAlpha: decrease rate in socio-phychological force
 	private float lambdaAlpha = 0.1f; //lambdaAlpha: description of anisotropic force
@@ -44,7 +45,8 @@ public class People : MonoBehaviour
 		pos = this.transform.position;
 		tau = Parameters.Instance.tau;
 		v0 = Parameters.Instance.v0;
-		Aalpha = Parameters.Instance.Aalpha;
+		Aalpha_same = Parameters.Instance.Aalpha_same;
+		Aalpha_opp = Parameters.Instance.Aalpha_opp;
 		radius = Parameters.Instance.radius;
 		BAlpha = Parameters.Instance.BAlpha;
 		lambdaAlpha = Parameters.Instance.lambdaAlpha;
@@ -58,7 +60,8 @@ public class People : MonoBehaviour
 		pos = this.transform.position;
 		tau = Parameters.Instance.tau;
 		v0 = Parameters.Instance.v0;
-		Aalpha = Parameters.Instance.Aalpha;
+		Aalpha_same = Parameters.Instance.Aalpha_same;
+		Aalpha_opp = Parameters.Instance.Aalpha_opp;
 		radius = Parameters.Instance.radius;
 		BAlpha = Parameters.Instance.BAlpha;
 		lambdaAlpha = Parameters.Instance.lambdaAlpha;
@@ -79,11 +82,11 @@ public class People : MonoBehaviour
 		pos = this.transform.position;
 
 		//目的地に到達したら削除
-		if(type == Type.A && pos.x > Parameters.Instance.L){
+		if(type == Type.A && pos.x > Parameters.Instance.Lx){
 			PeopleManager.Instance.RemovePeople(this);
 			Destroy(this.gameObject);
 		}	
-		if(type == Type.B && pos.x < -Parameters.Instance.L){
+		if(type == Type.B && pos.x < -Parameters.Instance.Lx){
 			PeopleManager.Instance.RemovePeople(this);
 			Destroy(this.gameObject);
 		}	
@@ -110,7 +113,8 @@ public class People : MonoBehaviour
 				deltaV = Vector3.Dot(people.velocity - this.velocity, tVector);
 				cos_phiAlphaBeta = -(nVector.x * eVector.x + nVector.y * eVector.y);
 				// Socio-phychological Force
-				f_soc += Aalpha * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * nVector;
+				if(this.type == people.type)	f_soc += Aalpha_same * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * nVector;
+				else							f_soc += Aalpha_opp  * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * nVector;
 				// physical force
 				f_ph += k* Theta(r-d) * nVector + kappa * Theta(r-d) * deltaV * tVector;
 				//direction-change force
@@ -124,20 +128,20 @@ public class People : MonoBehaviour
 		
 		//interactions from upper boundary(y = 10)
 		r = this.radius;
-		d = Parameters.Instance.L - this.pos.y;
+		d = Parameters.Instance.Ly - this.pos.y;
 		nVector = new Vector3(0f,-1f);
 		tVector = new Vector3(-nVector.y, nVector.x);
 		deltaV = Vector3.Dot(-this.velocity, tVector);
-		f_b_soc = Aalpha * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * nVector;
+		f_b_soc = Aalpha_opp * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * nVector;
 		f_ph = k* Theta(r-d) * nVector + kappa * Theta(r-d) * deltaV * tVector;
 		
 		//interactions from lower boundary(y = -10)
 		r = this.radius;
-		d = this.pos.y + Parameters.Instance.L;
+		d = this.pos.y + Parameters.Instance.Ly;
 		nVector = new Vector3(0f,1f);
 		tVector = new Vector3(-nVector.y, nVector.x);
 		deltaV = Vector3.Dot(-this.velocity, tVector);
-		f_b_soc += Aalpha * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * nVector;
+		f_b_soc += Aalpha_opp * Mathf.Exp((r-d)/BAlpha) * (lambdaAlpha + (1-lambdaAlpha)*(1+cos_phiAlphaBeta)/2) * nVector;
 		f_ph += k* Theta(r-d) * nVector + kappa * Theta(r-d) * deltaV * tVector;
 		
 		//velocity計算
