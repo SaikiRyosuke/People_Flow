@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public enum Type
 {
@@ -12,7 +13,7 @@ public class Parameters : MonoBehaviour
 	public float Lx = 50f;
 	public float Ly = 10f;
 	public int phiDivision = 50;
-	public float generateRate = 4;
+	public float numberOfPeople = 4;
 
 
 	//peoples individual parameters
@@ -30,6 +31,13 @@ public class Parameters : MonoBehaviour
 	public float CAlpha = 1;
 	public float d_dir = 1f;
 	
+	//for recording
+	public string fileDirectory;
+	public StreamWriter streamWriter;
+	public string[] parametersName;
+	public string[]  parametersValue;
+	public float fileNumber = 0f;
+	
 	public static Parameters Instance;
 	void Awake()
 	{
@@ -42,7 +50,7 @@ public class Parameters : MonoBehaviour
 		Lx = pm.Lx;
 		Ly = pm.Ly;
 		phiDivision = pm.phiDivision;
-		generateRate = pm.generateRate;
+		numberOfPeople = pm.numberOfPeople;
 		tau = pm.tau;
 		v0 = pm.v0;
 		Aalpha_same = pm.Aalpha_same;
@@ -54,6 +62,20 @@ public class Parameters : MonoBehaviour
 		kappa = pm.kappa;
 		CAlpha = pm.CAlpha;
 		d_dir = pm.d_dir;
+		
+		fileDirectory = "Assets\\Resources\\result" + fileNumber.ToString() + ".csv";
+		while(File.Exists(fileDirectory)){
+			fileNumber++;
+			fileDirectory = "Assets\\Resources\\result" + fileNumber.ToString() + ".csv";
+		}
+		streamWriter = new StreamWriter(fileDirectory, false);		
+		
+		parametersName = new string[] {"Lx", "Ly", "phiDivision", "numberOfPeople", "tau", "v0","Aalpha_same", "Aalpha_opp", "radius", "BAlpha", "lambdaAlpha", "k", "kappa", "CAlpha", "d_dir"};
+		string s = string.Join(",", parametersName);
+		streamWriter.WriteLine(s);
+		parametersValue = new string[]{Lx.ToString(), Ly.ToString(), phiDivision.ToString(), numberOfPeople.ToString(), tau.ToString(), v0.ToString(), Aalpha_same.ToString(), Aalpha_opp.ToString(), radius.ToString(), BAlpha.ToString(), lambdaAlpha.ToString(), k.ToString(), kappa.ToString(), CAlpha.ToString(), d_dir.ToString()};
+		s = string.Join(",", parametersValue);
+		streamWriter.WriteLine(s);
 	}
 }
 
@@ -64,7 +86,7 @@ public class ParameterManager
 	public float Lx = 100f;
 	public float Ly = 10f;
 	public int phiDivision = 50;
-	public float generateRate = 4;
+	public float numberOfPeople = 4;
 
 
 	//peoples individual parameters

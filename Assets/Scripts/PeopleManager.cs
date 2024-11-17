@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using System.IO;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Text;
 
 public class PeopleManager : MonoBehaviour
 {
@@ -16,21 +18,24 @@ public class PeopleManager : MonoBehaviour
 	public Text timeScaleText;
 	public Text phiText;
 	public int phiDivision = 50;	
-	public float generateRate = 4;
+	public float numberOfPeople = 100;
 	
 	float[] phiArray, npArray, nmArray;
 	List<GameObject> phiDisplay = new List<GameObject>();
 	float phi;
 	List<float> phiListForTime = new List<float>();
 	public float phiAverageForTime = 0f;
+	public float currentTime = 0f;
+	StreamWriter streamWriter;
+	
 	
 		
 	void Start()
 	{
-		Debug.Log(Parameters.Instance.Aalpha_same);
+		streamWriter = Parameters.Instance.streamWriter;
 		Instance = this;
 		phiDivision = Parameters.Instance.phiDivision;
-		generateRate = Parameters.Instance.generateRate;
+		numberOfPeople = Parameters.Instance.numberOfPeople;
 		A.SetActive(true);	B.SetActive(true);
 		for(int i = 0; i < A.transform.childCount; i++){
 			peopleList.Add(A.transform.GetChild(i).GetComponent<People>());
@@ -43,6 +48,7 @@ public class PeopleManager : MonoBehaviour
 			obj.transform.localScale = new Vector3(1,2*Parameters.Instance.Ly/phiDivision,1);
 			phiDisplay.Add(obj);
 		}
+		streamWriter.WriteLine("t,phi");
 	}
 
     // Update is called once per frame
@@ -88,7 +94,14 @@ public class PeopleManager : MonoBehaviour
 		phiListForTime.Add(phi);
 		phiAverageForTime = phiListForTime.Average();
 		phiText.text = phi.ToString();
+		currentTime += Time.deltaTime;
+		streamWriter.WriteLine(currentTime.ToString() + " , " + phi.ToString());
     }
+	
+	void OnApplicationQuit()
+	{
+		streamWriter.Flush();
+	}
 	
 	public void AddPeople(People people)
 	{

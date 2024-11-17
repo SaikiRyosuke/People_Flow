@@ -81,14 +81,14 @@ public class People : MonoBehaviour
 	{
 		pos = this.transform.position;
 
-		//目的地に到達したら削除
+		//目的地に到達したら削除→周期的境界条件に変更
 		if(type == Type.A && pos.x > Parameters.Instance.Lx){
-			PeopleManager.Instance.RemovePeople(this);
-			Destroy(this.gameObject);
+			this.transform.position = new Vector3(-Parameters.Instance.Lx, pos.y, 0);
+			this.pos = new Vector3(-Parameters.Instance.Lx, pos.y, 0);
 		}	
 		if(type == Type.B && pos.x < -Parameters.Instance.Lx){
-			PeopleManager.Instance.RemovePeople(this);
-			Destroy(this.gameObject);
+			this.transform.position = new Vector3(Parameters.Instance.Lx, pos.y, 0);
+			this.pos = new Vector3(Parameters.Instance.Lx, pos.y, 0);
 		}	
 		
 		//物理量計算パート

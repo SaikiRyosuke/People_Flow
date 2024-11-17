@@ -1,17 +1,17 @@
 {
 	"Lx": 100,
-	"Ly": 10,
+	"Ly": 20,
 	"phiDivision": 50,
 	"generateRate":0.5,
-	
-	"tau": 1,
+	"numberOfPeople": 500,
+	"tau": 0.5,
 	"v0": 2,
-	"xiAmp": 0.5,
+	"xiAmp": 1,
 	
 	"Aalpha_same": 1,
 	"Aalpha_opp":  2,
 	"radius": 0.3,
-	"BAlpha": 1,
+	"BAlpha": 3,
 	"lambdaAlpha": 0.3,
 	"k": 5,
 	"kappa": 5,
