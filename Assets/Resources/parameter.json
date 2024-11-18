@@ -11,7 +11,7 @@
 	"Aalpha_same": 1,
 	"Aalpha_opp":  2,
 	"radius": 0.3,
-	"BAlpha": 3,
+	"BAlpha": 4,
 	"lambdaAlpha": 0.3,
 	"k": 5,
 	"kappa": 5,
