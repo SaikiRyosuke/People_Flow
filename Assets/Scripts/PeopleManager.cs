@@ -26,13 +26,13 @@ public class PeopleManager : MonoBehaviour
 	List<float> phiListForTime = new List<float>();
 	public float phiAverageForTime = 0f;
 	public float currentTime = 0f;
-	StreamWriter streamWriter;
+	// StreamWriter streamWriter;
 	
 	
 		
 	void Start()
 	{
-		streamWriter = Parameters.Instance.streamWriter;
+		// streamWriter = Parameters.Instance.streamWriter;
 		Instance = this;
 		phiDivision = Parameters.Instance.phiDivision;
 		numberOfPeople = Parameters.Instance.numberOfPeople;
@@ -48,7 +48,7 @@ public class PeopleManager : MonoBehaviour
 			obj.transform.localScale = new Vector3(1,2*Parameters.Instance.Ly/phiDivision,1);
 			phiDisplay.Add(obj);
 		}
-		streamWriter.WriteLine("t,phi");
+		// streamWriter.WriteLine("t,phi");
 	}
 
     // Update is called once per frame
@@ -95,12 +95,12 @@ public class PeopleManager : MonoBehaviour
 		phiAverageForTime = phiListForTime.Average();
 		phiText.text = phi.ToString();
 		currentTime += Time.deltaTime;
-		streamWriter.WriteLine(currentTime.ToString() + " , " + phi.ToString());
+		// streamWriter.WriteLine(currentTime.ToString() + " , " + phi.ToString());
     }
 	
 	void OnApplicationQuit()
 	{
-		streamWriter.Flush();
+		// streamWriter.Flush();
 	}
 	
 	public void AddPeople(People people)

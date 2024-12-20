@@ -33,7 +33,7 @@ public class Parameters : MonoBehaviour
 	
 	//for recording
 	public string fileDirectory;
-	public StreamWriter streamWriter;
+	// public StreamWriter streamWriter;
 	public string[] parametersName;
 	public string[]  parametersValue;
 	public float fileNumber = 0f;
@@ -68,14 +68,14 @@ public class Parameters : MonoBehaviour
 			fileNumber++;
 			fileDirectory = "Assets\\Resources\\result" + fileNumber.ToString() + ".csv";
 		}
-		streamWriter = new StreamWriter(fileDirectory, false);		
+		// streamWriter = new StreamWriter(fileDirectory, false);		
 		
 		parametersName = new string[] {"Lx", "Ly", "phiDivision", "numberOfPeople", "tau", "v0","Aalpha_same", "Aalpha_opp", "radius", "BAlpha", "lambdaAlpha", "k", "kappa", "CAlpha", "d_dir"};
 		string s = string.Join(",", parametersName);
-		streamWriter.WriteLine(s);
+		// streamWriter.WriteLine(s);
 		parametersValue = new string[]{Lx.ToString(), Ly.ToString(), phiDivision.ToString(), numberOfPeople.ToString(), tau.ToString(), v0.ToString(), Aalpha_same.ToString(), Aalpha_opp.ToString(), radius.ToString(), BAlpha.ToString(), lambdaAlpha.ToString(), k.ToString(), kappa.ToString(), CAlpha.ToString(), d_dir.ToString()};
 		s = string.Join(",", parametersValue);
-		streamWriter.WriteLine(s);
+		// streamWriter.WriteLine(s);
 	}
 }
 
